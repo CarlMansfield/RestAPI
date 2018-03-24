@@ -52,3 +52,22 @@ class DatabaseHandler(tornado.web.RequestHandler):
     def get(self):
         for line in _db.iterdump():
             self.write('%s\n' % line)
+
+    def delete(self):
+        _cursor.execute("DROP TABLE IF EXISTS data")
+        _cursor.execute("CREATE TABLE data (ID VARCHAR(255), price REAL, quantity INT, UNIQUE (ID))")
+        _cursor.execute("INSERT INTO data VALUES ('milk', 0.3, 8)")
+        _cursor.execute("INSERT INTO data VALUES ('flower', 2.3, 2)")
+        _db.commit()
+        self.write('OK')
+
+
+application = tornado.web.Application([
+    (r"/database", DatabaseHandler),
+    (r"/item/([milk, flower]+)", SensorRequestHandler),
+])
+
+if __name__ == "__main__":
+    http_server = tornado.httpserver.HTTPServer(application)
+    http_server.listen(43210)
+    tornado.ioloop.IOLoop.instance().start()
