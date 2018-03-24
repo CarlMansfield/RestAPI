@@ -6,7 +6,8 @@ import sqlite3
 _db = sqlite3.connect('shop.db')
 _cursor = _db.cursor()
 
-class sensorRequestHandler(tornado.web.RequestHandler):
+
+class SensorRequestHandler(tornado.web.RequestHandler):
     def get(self, arg):
         price = self.get_argument("price", None)
         quantity = self.get_argument("quantity", None)
@@ -25,6 +26,7 @@ class sensorRequestHandler(tornado.web.RequestHandler):
             _cursor.execute("SELECT quantity FROM data WHERE ID = '" + arg + "'")
             amount = _cursor.fetchone()
             self.write(arg + " total stock value:" + str(format(cost[0]*amount[0], ".2f")))
+
     def put(self, item):
         self.write(item)
         price = self.get_argument("price", None)
@@ -45,7 +47,8 @@ class sensorRequestHandler(tornado.web.RequestHandler):
         else:
             self.write(item)
 
-class databaseHandler(tornado.web.RequestHandler):
+
+class DatabaseHandler(tornado.web.RequestHandler):
     def get(self):
         for line in _db.iterdump():
             self.write('%s\n' % line)
